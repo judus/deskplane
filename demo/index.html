@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A functional demonstration of the deskplane virtual desktop navigator."
+    />
+    <title>deskplane demo</title>
+  </head>
+  <body>
+    <header class="app-bar app-bar--top">
+      <strong>deskplane</strong>
+      <nav aria-label="Example destinations">
+        <button type="button" data-go-to="top-overview">Overview</button>
+        <button type="button" data-go-to="middle-dashboard">Dashboard</button>
+        <button type="button" data-go-to="middle-settings">Settings</button>
+        <button type="button" data-go-to="bottom-contact">Contact</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="demo-introduction">
+        <p class="eyebrow">Framework-agnostic demonstration</p>
+        <h1>A viewport inside an ordinary container</h1>
+        <p>
+          Use the fixed controls or drag the labelled rails. The desktop content
+          remains independently interactive and scrollable.
+        </p>
+      </section>
+
+      <div class="viewport-frame">
+        <div id="desktop-viewport" aria-label="Virtual desktop example"></div>
+      </div>
+
+      <p class="demo-note">
+        Resize the browser to see each desktop respond to its container rather
+        than the browser window.
+      </p>
+    </main>
+
+    <footer class="app-bar app-bar--bottom">
+      <output id="desktop-status" aria-live="polite"></output>
+      <div class="direction-controls" aria-label="Move between desktops">
+        <button type="button" data-move="left" aria-label="Move left">←</button>
+        <button type="button" data-move="up" aria-label="Move up">↑</button>
+        <button type="button" data-move="down" aria-label="Move down">↓</button>
+        <button type="button" data-move="right" aria-label="Move right">
+          →
+        </button>
+      </div>
+    </footer>
+
+    <div id="desktop-source" hidden>
+      <section data-desktop="top-overview">
+        <p class="eyebrow">Top row</p>
+        <h2>Overview</h2>
+        <div class="metric-grid">
+          <article><strong>3</strong><span>independent rows</span></article>
+          <article><strong>0</strong><span>runtime dependencies</span></article>
+          <article>
+            <strong>2D</strong><span>axis-locked navigation</span>
+          </article>
+        </div>
+      </section>
+
+      <section data-desktop="top-notes">
+        <p class="eyebrow">Top row</p>
+        <h2>Scrollable notes</h2>
+        <div class="scroll-panel" data-deskplane-no-swipe tabindex="0">
+          <p>
+            This panel owns its scrolling. Gesture navigation only begins on an
+            explicit rail, so normal content behavior stays intact.
+          </p>
+          <p>
+            Each row remembers a separate horizontal position. Moving away and
+            returning restores the desktop previously selected in that row.
+          </p>
+          <p>
+            A direct jump to another row silently aligns that hidden row first,
+            then performs only the vertical transition.
+          </p>
+          <p>
+            The demo has different numbers of desktops per row to prove that the
+            engine is not based on a fixed three-by-three matrix.
+          </p>
+        </div>
+      </section>
+
+      <section data-desktop="middle-library">
+        <p class="eyebrow">Middle row</p>
+        <h2>Library</h2>
+        <ul class="plain-list">
+          <li>Headless controller API</li>
+          <li>Responsive DOM renderer</li>
+          <li>Explicit swipe zones</li>
+          <li>External active-state subscriptions</li>
+        </ul>
+      </section>
+
+      <section data-desktop="middle-activity">
+        <p class="eyebrow">Middle row</p>
+        <h2>Activity</h2>
+        <div class="activity-list">
+          <p><span>09:12</span> Axis locked horizontally</p>
+          <p><span>09:13</span> Destination row pre-aligned</p>
+          <p><span>09:14</span> Vertical transition completed</p>
+        </div>
+      </section>
+
+      <section data-desktop="middle-dashboard">
+        <p class="eyebrow">Initial desktop</p>
+        <h2>Dashboard</h2>
+        <div class="dashboard-layout">
+          <article>
+            <h3>Container-aware content</h3>
+            <p>
+              This layout changes through a container query based on the
+              viewport—not the page width.
+            </p>
+          </article>
+          <article>
+            <h3>Try it</h3>
+            <button type="button" id="demo-action">
+              A normal content button
+            </button>
+            <output id="demo-action-result">Not pressed</output>
+          </article>
+        </div>
+      </section>
+
+      <section data-desktop="middle-settings">
+        <p class="eyebrow">Middle row</p>
+        <h2>Settings form</h2>
+        <form id="settings-form">
+          <label>
+            Display name
+            <input name="name" value="Virtual explorer" />
+          </label>
+          <label>
+            Transition preference
+            <select name="transition">
+              <option>Comfortable</option>
+              <option>Quick</option>
+            </select>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" checked /> Remember row positions
+          </label>
+          <button type="submit">Save locally</button>
+          <output id="settings-result"></output>
+        </form>
+      </section>
+
+      <section data-desktop="middle-help">
+        <p class="eyebrow">Middle row</p>
+        <h2>Gesture help</h2>
+        <p>
+          Drag the bottom rail horizontally or the right rail vertically. A
+          gesture is locked to one axis after crossing its threshold.
+        </p>
+      </section>
+
+      <section data-desktop="bottom-contact">
+        <p class="eyebrow">Bottom row</p>
+        <h2>Contact form</h2>
+        <form id="contact-form">
+          <label>
+            Email
+            <input name="email" type="email" value="demo@example.com" />
+          </label>
+          <label>
+            Message
+            <textarea name="message" rows="4">
+The form remains usable.</textarea>
+          </label>
+          <button type="submit">Send demonstration</button>
+          <output id="contact-result"></output>
+        </form>
+      </section>
+
+      <section data-desktop="bottom-details">
+        <p class="eyebrow">Bottom row</p>
+        <h2>Implementation details</h2>
+        <dl class="details-list">
+          <div>
+            <dt>Runtime dependencies</dt>
+            <dd>None</dd>
+          </div>
+          <div>
+            <dt>Source</dt>
+            <dd>TypeScript + structural CSS</dd>
+          </div>
+          <div>
+            <dt>Controls</dt>
+            <dd>Owned by the application</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

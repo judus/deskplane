@@ -1,0 +1,9 @@
+.agents/
+.codex/
+.context/
+.idea/
+coverage/
+demo-dist/
+dist/
+node_modules/
+package-lock.json

@@ -1,0 +1,6 @@
+.idea/
+coverage/
+demo-dist/
+dist/
+node_modules/
+*.tsbuildinfo

@@ -1,0 +1,54 @@
+@layer deskplane {
+  .deskplane-viewport {
+    --deskplane-transition-duration: 320ms;
+    --deskplane-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
+    position: relative;
+    overflow: hidden;
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  .deskplane-stage,
+  .deskplane-row,
+  .deskplane-strip,
+  .deskplane-desktop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .deskplane-stage,
+  .deskplane-strip {
+    top: 0;
+    left: 0;
+    will-change: transform;
+    transition-property: transform;
+    transition-duration: var(--deskplane-transition-duration);
+    transition-timing-function: var(--deskplane-transition-easing);
+  }
+
+  .deskplane-row {
+    left: 0;
+    overflow: clip;
+  }
+
+  .deskplane-desktop {
+    top: 0;
+    overflow: auto;
+    container-type: size;
+  }
+
+  .deskplane-swipe-zone {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .deskplane-stage,
+    .deskplane-strip {
+      transition-duration: 0ms;
+    }
+  }
+}
