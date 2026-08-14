@@ -1,6 +1,6 @@
 {
   "name": "deskplane",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A framework-agnostic, two-dimensional virtual desktop navigator for the web.",
   "keywords": [
     "carousel",
@@ -54,6 +54,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
+    "prepare": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.json --noEmit"
