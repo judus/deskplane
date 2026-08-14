@@ -79,6 +79,51 @@ The example omits application-specific null checks for readability. TypeScript u
 
 The supplied desktop elements are moved into the viewport while the controller is active. `destroy()` restores their original DOM positions, relevant attributes, and inert state.
 
+## React adapter
+
+React applications can use the optional `deskplane/react` entry point:
+
+```tsx
+import { useState } from "react";
+import { DeskplaneViewport } from "deskplane/react";
+import type { Deskplane } from "deskplane";
+import "deskplane/style.css";
+
+export function ApplicationDesktops() {
+  const [deskplane, setDeskplane] = useState<Deskplane>();
+
+  return (
+    <>
+      <button onClick={() => void deskplane?.goTo("controls")}>Controls</button>
+      <button onClick={() => void deskplane?.goTo("information")}>Info</button>
+
+      <DeskplaneViewport
+        className="application-viewport"
+        initialDesktopId="information"
+        onReady={(controller) => {
+          setDeskplane(controller);
+          return () => setDeskplane(undefined);
+        }}
+        rows={[
+          {
+            id: "main",
+            desktops: [
+              { id: "controls", children: <Controls /> },
+              { id: "information", children: <Information /> },
+              { id: "copilot", children: <Copilot /> },
+            ],
+          },
+        ]}
+      />
+    </>
+  );
+}
+```
+
+The adapter has no application or routing assumptions. It creates the desktop containers and renders application content into them through React portals. React retains ownership of every component tree while the framework-agnostic Deskplane core owns positioning, gestures, and navigation state.
+
+React and React DOM are optional peer dependencies: applications using only the core package do not need either framework.
+
 ## External controls
 
 Controls can live anywhere in the document. A control only needs a target desktop id:
