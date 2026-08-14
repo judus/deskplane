@@ -1,10 +1,14 @@
-# deskplane
+# Deskplane
 
 A framework-agnostic, two-dimensional virtual desktop navigator for the web.
 
 The package owns coordinates, active state, gestures, and movement. Your application owns all content, controls, indicators, and visual design.
 
-> The package is functional but is not published to npm yet.
+![deskplane-preview.png](assets/deskplane-preview.png)
+
+Demo: [Codepen](https://codepen.io/editor/judus/pen/01a001fb-11b2-7534-8394-8ee1faa41eab)
+
+> The package is available on [npm](https://www.npmjs.com/package/deskplane).
 
 ## Features
 
