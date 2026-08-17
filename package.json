@@ -15,7 +15,8 @@
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "assets"
   ],
   "exports": {
     ".": {

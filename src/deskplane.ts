@@ -599,20 +599,40 @@ class DeskplaneController implements Deskplane {
 
   private updateAccessibility(): void {
     const activeDesktopId = this.state.activeDesktopId;
+    const activePlacement = this.placements.find(
+      (placement) => placement.id === activeDesktopId,
+    );
+    const activeElement = this.viewport.ownerDocument.activeElement;
+    const transferFocus =
+      activePlacement !== undefined &&
+      activeElement !== null &&
+      this.placements.some(
+        (placement) =>
+          placement.id !== activeDesktopId &&
+          placement.element.contains(activeElement),
+      );
+
+    if (activePlacement !== undefined) {
+      activePlacement.element.inert = activePlacement.inert;
+      restoreAttribute(
+        activePlacement.element,
+        "aria-hidden",
+        activePlacement.ariaHidden,
+      );
+
+      if (transferFocus) {
+        const tabIndex = activePlacement.element.getAttribute("tabindex");
+        activePlacement.element.tabIndex = -1;
+        activePlacement.element.focus({ preventScroll: true });
+        restoreAttribute(activePlacement.element, "tabindex", tabIndex);
+      }
+    }
 
     for (const placement of this.placements) {
       const isActive = placement.id === activeDesktopId;
-      placement.element.inert = isActive ? placement.inert : true;
-
-      if (isActive) {
-        restoreAttribute(
-          placement.element,
-          "aria-hidden",
-          placement.ariaHidden,
-        );
-      } else {
-        placement.element.setAttribute("aria-hidden", "true");
-      }
+      if (isActive) continue;
+      placement.element.inert = true;
+      placement.element.setAttribute("aria-hidden", "true");
     }
   }
 

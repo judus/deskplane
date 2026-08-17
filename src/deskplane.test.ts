@@ -63,6 +63,30 @@ describe("createDeskplane", () => {
     desktop.destroy();
   });
 
+  it("moves focus before hiding the previously active desktop", async () => {
+    const fixture = createFixture();
+    const desktop = createDeskplane({
+      viewport: fixture.viewport,
+      rows: fixture.rows,
+      transition: { duration: 0 },
+    });
+    const current = fixture.elements.get("middle-center");
+    const destination = fixture.elements.get("middle-right");
+    const button = document.createElement("button");
+    current?.append(button);
+    button.focus();
+
+    await desktop.goTo("middle-right");
+
+    expect(document.activeElement).toBe(destination);
+    expect(current?.inert).toBe(true);
+    expect(current?.getAttribute("aria-hidden")).toBe("true");
+    expect(destination?.inert).toBe(false);
+    expect(destination?.hasAttribute("aria-hidden")).toBe(false);
+    expect(destination?.hasAttribute("tabindex")).toBe(false);
+    desktop.destroy();
+  });
+
   it("locks an explicit swipe zone to one axis", () => {
     const fixture = createFixture(true);
     Object.defineProperty(fixture.viewport, "clientWidth", { value: 400 });
