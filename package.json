@@ -1,6 +1,6 @@
 {
   "name": "deskplane",
-  "version": "0.1.4-swipe.0",
+  "version": "0.1.4",
   "description": "A framework-agnostic, two-dimensional virtual desktop navigator for the web.",
   "keywords": [
     "carousel",
