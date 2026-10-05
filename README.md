@@ -179,6 +179,22 @@ createDeskplane({
 
 The structural stylesheet applies `touch-action: none` only to swipe zones. Normal desktop content therefore keeps its native touch, scrolling, selection, and form behavior. Common interactive controls and `[data-deskplane-no-swipe]` are also ignored if nested inside a zone.
 
+An ordinary tap button may opt into swipes starting on it:
+
+```html
+<button data-deskplane-swipe-through>Open controls</button>
+```
+
+Without a drag, its normal click handler runs. Once the gesture locks past `lockThreshold`,
+Deskplane suppresses the associated pointer click, including when the swipe snaps back or
+is cancelled. Keyboard activation and the next tap are unaffected. The marker only opts a
+button out of the **default** button exclusion; other default exclusions, including
+`data-deskplane-no-swipe` ancestors, still apply. A custom `gestures.ignore` replaces the
+default selector, so retain any required exclusions there. Do not opt in buttons that execute on
+pointer-down, hold to run/arm, or own an editing drag. Applications must preserve the zone's
+touch policy through nested scroll owners, while excluded map/control surfaces retain their
+own touch policy.
+
 ## Container queries
 
 Every mounted `.deskplane-desktop` is a size container. Application content can react to the actual viewport dimensions:

@@ -13,7 +13,7 @@ import type {
 
 const DEFAULT_IGNORE_SELECTOR = [
   "a[href]",
-  "button",
+  "button:not([data-deskplane-swipe-through])",
   "input",
   "option",
   "select",
@@ -45,6 +45,7 @@ interface ActiveGesture {
   readonly startY: number;
   readonly startedAt: number;
   readonly axes: SwipeZoneAxes;
+  readonly clickTarget: Element | null;
   axis: NavigationAxis | null;
   deltaX: number;
   deltaY: number;
@@ -80,9 +81,31 @@ class DeskplaneController implements Deskplane {
   private readonly previousEasingProperty: string;
 
   private activeGesture: ActiveGesture | null = null;
+  private suppressedClick: {
+    readonly pointerId: number;
+    readonly target: Element;
+  } | null = null;
   private isAnimating = false;
   private destroyed = false;
   private operation = 0;
+
+  private readonly onPointerDownCapture = (event: PointerEvent): void => {
+    if (event.isPrimary) this.suppressedClick = null;
+  };
+
+  private readonly onClickCapture = (event: MouseEvent): void => {
+    const suppressed = this.suppressedClick;
+    // Keyboard and programmatic activation are independent of a pointer drag.
+    if (suppressed === null || event.detail === 0) return;
+    const matches =
+      "pointerId" in event
+        ? event.pointerId === suppressed.pointerId
+        : isElement(event.target) && suppressed.target.contains(event.target);
+    if (!matches) return;
+    this.suppressedClick = null;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  };
 
   private readonly onPointerMove = (event: PointerEvent): void => {
     const gesture = this.activeGesture;
@@ -96,6 +119,12 @@ class DeskplaneController implements Deskplane {
 
     if (gesture.axis === null) {
       gesture.axis = this.resolveAllowedAxis(gesture);
+      if (gesture.axis !== null && gesture.clickTarget !== null) {
+        this.suppressedClick = {
+          pointerId: gesture.pointerId,
+          target: gesture.clickTarget,
+        };
+      }
     }
 
     if (gesture.axis === null) {
@@ -254,6 +283,12 @@ class DeskplaneController implements Deskplane {
     if (options.gestures !== false) {
       const zones = options.gestures?.zones ?? this.findDeclarativeSwipeZones();
       this.mountSwipeZones(zones);
+      this.view.addEventListener(
+        "pointerdown",
+        this.onPointerDownCapture,
+        true,
+      );
+      this.view.addEventListener("click", this.onClickCapture, true);
       this.view.addEventListener("pointermove", this.onPointerMove, {
         passive: false,
       });
@@ -306,10 +341,17 @@ class DeskplaneController implements Deskplane {
     this.destroyed = true;
     this.operation += 1;
     this.activeGesture = null;
+    this.suppressedClick = null;
     this.listeners.clear();
     this.view.removeEventListener("pointermove", this.onPointerMove);
     this.view.removeEventListener("pointerup", this.onPointerUp);
     this.view.removeEventListener("pointercancel", this.onPointerCancel);
+    this.view.removeEventListener(
+      "pointerdown",
+      this.onPointerDownCapture,
+      true,
+    );
+    this.view.removeEventListener("click", this.onClickCapture, true);
 
     for (const zone of this.mountedZones) {
       zone.definition.element.removeEventListener(
@@ -450,6 +492,9 @@ class DeskplaneController implements Deskplane {
       startY: event.clientY,
       startedAt: event.timeStamp,
       axes,
+      clickTarget: isElement(event.target)
+        ? (event.target.closest("button, a[href]") ?? event.target)
+        : null,
       axis: null,
       deltaX: 0,
       deltaY: 0,
